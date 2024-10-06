@@ -1,0 +1,134 @@
+[
+  {
+    "id":"b51f0b7c-c295-4d3a-b258-ec343f62befc",
+    "name": "HMS Victory",
+    "type": "First-rate ship of the line",
+    "launch_year": 1765,
+    "country": "United Kingdom",
+    "length": "69.3 meters",
+    "notable_events": [
+      "Served as Admiral Nelson's flagship at the Battle of Trafalgar in 1805",
+      "Currently preserved as a museum ship in Portsmouth"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-3d3a-b258-ec343f63befc",
+    "name": "USS Constitution",
+    "type": "Frigate",
+    "launch_year": 1797,
+    "country": "United States",
+    "length": "62.3 meters",
+    "notable_events": [
+      "Famous for defeating HMS Guerriere during the War of 1812",
+      "Still commissioned and used for educational purposes"
+    ]
+  },
+  {
+    "id":"e51f0b7c-c295-4d3a-b258-ec343f63befc",
+    "name": "Cutty Sark",
+    "type": "Clipper ship",
+    "launch_year": 1869,
+    "country": "United Kingdom",
+    "length": "65.2 meters",
+    "notable_events": [
+      "One of the last tea clippers built",
+      "Currently a museum ship in Greenwich"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-4d3a-b258-ex343f63befc",
+    "name": "Bounty",
+    "type": "Bark",
+    "launch_year": 1784,
+    "country": "United Kingdom",
+    "length": "27 meters",
+    "notable_events": [
+      "Famous for the mutiny led by Fletcher Christian in 1789",
+      "Reproduced for the 1962 film 'Mutiny on the Bounty'"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-4d3a-b253-ec343f63befc",
+    "name": "Santa Maria",
+    "type": "Carrack",
+    "launch_year": 1492,
+    "country": "Spain",
+    "length": "23 meters",
+    "notable_events": [
+      "Christopher Columbus's flagship during his first voyage to the Americas",
+      "Sank off the coast of Hispaniola in 1492"
+    ]
+  },
+  {
+    "id":"a51f0b7c-c295-4d3a-b258-ec343f63befc",
+    "name": "Golden Hind",
+    "type": "Galleon",
+    "launch_year": 1577,
+    "country": "England",
+    "length": "30 meters",
+    "notable_events": [
+      "Circumnavigated the globe under Sir Francis Drake",
+      "Captured Spanish treasure ships"
+    ]
+  },
+  {
+    "id":"b51f0b7c-b295-4d3a-b258-ec343f63befc",
+    "name": "Vasa",
+    "type": "Warship",
+    "launch_year": 1628,
+    "country": "Sweden",
+    "length": "69 meters",
+    "notable_events": [
+      "Sank on her maiden voyage",
+      "Recovered and restored, now a museum ship in Stockholm"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-4d3a-a258-ec343f63befc",
+    "name": "Endeavour",
+    "type": "Bark",
+    "launch_year": 1764,
+    "country": "United Kingdom",
+    "length": "32 meters",
+    "notable_events": [
+      "Used by Captain James Cook on his first voyage of discovery",
+      "Mapped New Zealand and the eastern coast of Australia"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-4d3a-b258-ec343f63beac",
+    "name": "Albatross",
+    "type": "Clipper ship",
+    "launch_year": 1854,
+    "country": "United States",
+    "length": "56 meters",
+    "notable_events": [
+      "Famous for its speed in the tea trade",
+      "One of the last clipper ships built"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-4d3a-b258-ec343f63befb",
+    "name": "Richelieu",
+    "type": "Frigate",
+    "launch_year": 1892,
+    "country": "France",
+    "length": "96.5 meters",
+    "notable_events": [
+      "Participated in both World Wars",
+      "Preserved as a museum ship in Brest"
+    ]
+  },
+  {
+    "id":"b51f0b7c-c295-4d3a-b258-ec343f63befc",
+    "name": "Mayflower",
+    "type": "Galleon",
+    "launch_year": 1620,
+    "country": "England",
+    "length": "27 meters",
+    "notable_events": [
+      "Carried the Pilgrims to America",
+      "Symbol of American history"
+    ]
+  }
+]

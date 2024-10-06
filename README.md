@@ -1,2 +1,5 @@
-# python_fastapi_basic_w_jwk
- 
+# Ship App
+
+This uses a REACT frontend and a Python FastAPI backend to allow a user to interact with a ship api. This app requires authentication in order to interact with. 
+
+This example uses [Descope](https://app.descope.com/)
