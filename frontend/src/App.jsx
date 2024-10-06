@@ -187,7 +187,7 @@ const App = () => {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
     <div className="flex items-center mb-6">
-        <img src="./ship.png" alt="Logo" className="h-8 w-8 mr-2 self-center" />
+        <img src="./ship.png" alt="Logo" className="h-16 w-16 mr-2 self-center" />
         <h1 className="text-3xl font-bold ">Ships</h1>
     </div>
       <div className="mb-4 flex">
