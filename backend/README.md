@@ -31,7 +31,7 @@ This is a FastAPI-based API for managing and querying ship information. It provi
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/ship-api.git
+   git clone https://github.com/rimorcoder/python_fastapi_basic_w_jwk.git
    cd ship-api
    ```
 
