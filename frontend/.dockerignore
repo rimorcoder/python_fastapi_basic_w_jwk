@@ -1,0 +1,40 @@
+# Dependency directories
+node_modules/
+npm-debug.log
+
+# Build output
+build/
+dist/
+
+# Version control
+.git/
+.gitignore
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+
+# Misc
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.seed
+*.pid.lock

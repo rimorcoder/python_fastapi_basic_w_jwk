@@ -10,19 +10,24 @@ import json
 import time
 from cachetools import TTLCache
 import os
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # Replace these with your actual values
 ALGORITHM = os.getenv("ALGORITHM")
 ISSUER = os.getenv("ISSUER")
+IDP_DOMAIN = os.getenv("IDP_DOMAIN")
 AUDIENCE = os.getenv("AUDIENCE")
-OPENID_CONFIG_URL = f"{ISSUER}/.well-known/openid-configuration"
+OPENID_CONFIG_URL = f"{IDP_DOMAIN}/.well-known/openid-configuration"
 
 # Cache to store the JWKs (JSON Web Key Set)
 jwks_cache = TTLCache(maxsize=1, ttl=3600)  # Cache for 1 hour
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
-    authorizationUrl=f"{ISSUER}/authorize",
-    tokenUrl=f"{ISSUER}/oauth/token",
+    authorizationUrl=f"{IDP_DOMAIN}/authorize",
+    tokenUrl=f"{IDP_DOMAIN}/oauth/token",
 )
 
 async def get_jwks():
@@ -82,8 +87,7 @@ def verify_signature(token, public_key):
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+        detail="Could not validate credentials"
     )
     try:
         header, payload, _ = decode_jwt(token)
@@ -96,21 +100,25 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         public_key = get_public_key(header['kid'])
         
         if not verify_signature(token, public_key):
+            logging.warning("jwt verification : isignature invalid")
             raise credentials_exception
-        
-        current_time = int(time.time())
+        current_time = int(time.time())        
         if payload.get('iss') != ISSUER:
+            logging.warning("jwt verification : iss doesnt match")
             raise credentials_exception
-        if payload.get('aud') != AUDIENCE:
+        if payload.get('aud')[0] != AUDIENCE:
+            logging.warning("jwt verification : aud doesnt match")
             raise credentials_exception
         if payload.get('exp', 0) < current_time:
+            logging.warning("jwt verification : token expired")
             raise credentials_exception
-        if payload.get('nbf', 0) > current_time:
-            raise credentials_exception
+        # "not before" time
+        # if payload.get('nbf', 0) > current_time:
+        #     raise credentials_exception
         
         username = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            logging.warning("jwt verification : username missing")
     except (ValueError, KeyError):
         raise credentials_exception
     return username

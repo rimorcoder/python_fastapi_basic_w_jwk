@@ -1,154 +1,132 @@
 import React, { useState, useEffect } from 'react';
-import { XCircle, Search, Plus } from 'lucide-react';
+import { Search, Plus } from 'lucide-react';
 import { Alert, AlertDescription } from './components/ui/alert';
 import ShipCard from './components/ShipCard';
 import ShipForm from './components/ShipForm';
-
-const initialShips = [
-  {
-    "id":"b51f0b7c-c295-4d3a-b258-ec343f62befc",
-    "name": "HMS Victory",
-    "type": "First-rate ship of the line",
-    "launch_year": 1765,
-    "country": "United Kingdom",
-    "length": "69.3 meters",
-    "notable_events": [
-      "Served as Admiral Nelson's flagship at the Battle of Trafalgar in 1805",
-      "Currently preserved as a museum ship in Portsmouth"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-3d3a-b258-ec343f63befc",
-    "name": "USS Constitution",
-    "type": "Frigate",
-    "launch_year": 1797,
-    "country": "United States",
-    "length": "62.3 meters",
-    "notable_events": [
-      "Famous for defeating HMS Guerriere during the War of 1812",
-      "Still commissioned and used for educational purposes"
-    ]
-  },
-  {
-    "id":"e51f0b7c-c295-4d3a-b258-ec343f63befc",
-    "name": "Cutty Sark",
-    "type": "Clipper ship",
-    "launch_year": 1869,
-    "country": "United Kingdom",
-    "length": "65.2 meters",
-    "notable_events": [
-      "One of the last tea clippers built",
-      "Currently a museum ship in Greenwich"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-4d3a-b258-ex343f63befc",
-    "name": "Bounty",
-    "type": "Bark",
-    "launch_year": 1784,
-    "country": "United Kingdom",
-    "length": "27 meters",
-    "notable_events": [
-      "Famous for the mutiny led by Fletcher Christian in 1789",
-      "Reproduced for the 1962 film 'Mutiny on the Bounty'"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-4d3a-b253-ec343f63befc",
-    "name": "Santa Maria",
-    "type": "Carrack",
-    "launch_year": 1492,
-    "country": "Spain",
-    "length": "23 meters",
-    "notable_events": [
-      "Christopher Columbus's flagship during his first voyage to the Americas",
-      "Sank off the coast of Hispaniola in 1492"
-    ]
-  },
-  {
-    "id":"a51f0b7c-c295-4d3a-b258-ec343f63befc",
-    "name": "Golden Hind",
-    "type": "Galleon",
-    "launch_year": 1577,
-    "country": "England",
-    "length": "30 meters",
-    "notable_events": [
-      "Circumnavigated the globe under Sir Francis Drake",
-      "Captured Spanish treasure ships"
-    ]
-  },
-  {
-    "id":"b51f0b7c-b295-4d3a-b258-ec343f63befc",
-    "name": "Vasa",
-    "type": "Warship",
-    "launch_year": 1628,
-    "country": "Sweden",
-    "length": "69 meters",
-    "notable_events": [
-      "Sank on her maiden voyage",
-      "Recovered and restored, now a museum ship in Stockholm"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-4d3a-a258-ec343f63befc",
-    "name": "Endeavour",
-    "type": "Bark",
-    "launch_year": 1764,
-    "country": "United Kingdom",
-    "length": "32 meters",
-    "notable_events": [
-      "Used by Captain James Cook on his first voyage of discovery",
-      "Mapped New Zealand and the eastern coast of Australia"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-4d3a-b258-ec343f63beac",
-    "name": "Albatross",
-    "type": "Clipper ship",
-    "launch_year": 1854,
-    "country": "United States",
-    "length": "56 meters",
-    "notable_events": [
-      "Famous for its speed in the tea trade",
-      "One of the last clipper ships built"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-4d3a-b258-ec343f63befb",
-    "name": "Richelieu",
-    "type": "Frigate",
-    "launch_year": 1892,
-    "country": "France",
-    "length": "96.5 meters",
-    "notable_events": [
-      "Participated in both World Wars",
-      "Preserved as a museum ship in Brest"
-    ]
-  },
-  {
-    "id":"b51f0b7c-c295-4d3a-b258-ec343f63befc",
-    "name": "Mayflower",
-    "type": "Galleon",
-    "launch_year": 1620,
-    "country": "England",
-    "length": "27 meters",
-    "notable_events": [
-      "Carried the Pilgrims to America",
-      "Symbol of American history"
-    ]
-  }
-];
+import { useDescope, useSession, useUser } from '@descope/react-sdk'
+import { Descope } from '@descope/react-sdk'
+import { getSessionToken } from '@descope/react-sdk';
+import { useCallback } from 'react'
+import { v4 as uuidv4 } from 'uuid';
 
 const App = () => {
-  const [ships, setShips] = useState(initialShips);
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  const [ships, setShips] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [editingShip, setEditingShip] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [notification, setNotification] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const { isAuthenticated, isSessionLoading } = useSession()
+  const { user, isUserLoading } = useUser()
+  const { logout } = useDescope()
+  
+  const handleLogout = useCallback(() => {
+    logout()
+  }, [logout])
+
+  // Generate a UUID
+  const uuid = uuidv4();
+
 
   useEffect(() => {
-    // In a real application, you would fetch the ships data from an API here
+    const fetchShips = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${apiUrl}/ships`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${getSessionToken()}`
+          }
+        }
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch ships');
+        }
+        const data = await response.json();
+        setShips(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchShips();
   }, []);
+
+  const handleSubmit = async (shipData) => {
+    try {
+      if (editingShip) {
+        // update
+        const response = await fetch(`${apiUrl}/ships/${editingShip.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${getSessionToken()}`
+          },
+          body: JSON.stringify(shipData),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to update ship');
+        }
+        const updatedShip = await response.json();
+        setShips(ships.map(ship => ship.id === editingShip.id ? updatedShip : ship));
+        showNotification('Ship updated successfully');
+      } else {
+        // create
+        const shipDataWithUUID = {
+          ...shipData,
+          id: uuid,
+        };
+
+        const response = await fetch(`${apiUrl}/ships`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${getSessionToken()}`
+          },
+          body: JSON.stringify(shipDataWithUUID),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to create ship');
+        }
+        const newShip = await response.json();
+        setShips([...ships, newShip]);
+        showNotification('Ship created successfully');
+      }
+    } catch (error) {
+      showNotification(`Error: ${error.message}`);
+    }
+    setEditingShip(null);
+    setIsCreating(false);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${apiUrl}/ships/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${getSessionToken()}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete ship');
+      }
+      setShips(ships.filter(ship => ship.id !== id));
+      showNotification('Ship deleted successfully');
+    } catch (error) {
+      showNotification(`Error: ${error.message}`);
+    }
+  };
 
   const filteredShips = ships.filter(ship =>
     ship.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -161,35 +139,56 @@ const App = () => {
     setIsCreating(false);
   };
 
-  const handleDelete = (id) => {
-    setShips(ships.filter(ship => ship.id !== id));
-    showNotification('Ship deleted successfully');
-  };
-
-  const handleSubmit = (shipData) => {
-    if (editingShip) {
-      setShips(ships.map(ship => ship.id === editingShip.id ? { ...ship, ...shipData } : ship));
-      showNotification('Ship updated successfully');
-    } else {
-      const newShip = { ...shipData, id: Date.now().toString() };
-      setShips([...ships, newShip]);
-      showNotification('Ship created successfully');
-    }
-    setEditingShip(null);
-    setIsCreating(false);
-  };
-
   const showNotification = (message) => {
     setNotification(message);
     setTimeout(() => setNotification(null), 3000);
   };
 
+  
+  const sessionToken = getSessionToken()
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white p-8">
+        <div className="mb-4 flex  justify-center items-center">
+          <Descope
+            flowId="sign-up-or-in"
+            theme="dark"
+            onSuccess={(e) => console.log(e.detail.user)}
+            onError={(e) => console.log('Could not log in!')}
+            redirectAfterSuccess="/"
+          />
+        </div>
+      </div>
+    )
+  }
+
+  if (isSessionLoading || isUserLoading) {
+    return <p>Loading...</p>
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">
-    <div className="flex items-center mb-6">
-        <img src="./ship.png" alt="Logo" className="h-16 w-16 mr-2 self-center" />
-        <h1 className="text-3xl font-bold ">Ships</h1>
-    </div>
+      <header className="bg-gray-800 mb-4 text-white p-4 shadow-lg">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <img src="./ship.png" alt="Logo" className="h-12 w-12 rounded-full border-2 border-blue-500" />
+            <h1 className="text-3xl font-bold tracking-tight">Ships</h1>
+          </div>
+          <div className="flex items-center space-x-6">
+            <p className="text-lg hidden sm:inline">
+              Welcome, <span className="font-semibold">{user.name.charAt(0).toUpperCase() + user.name.slice(1)}</span>
+            </p>
+            <button
+              onClick={handleLogout}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out flex items-center space-x-2"
+            >
+
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
       <div className="mb-4 flex">
         <div className="relative flex-grow mr-4">
           <input
